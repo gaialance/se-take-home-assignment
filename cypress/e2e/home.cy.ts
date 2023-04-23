@@ -132,7 +132,7 @@ describe("Testing when adding new queue in between",()=>{
 })
 
 describe("Testing with 2 bots",()=>{
-  // total time taken around 50 min average 50/8 = 6.25 sec per request
+  // total time taken around 40 min average 40/8 = 5 sec per request
   it("start testing with two bot",()=>{
     cy.clock()
     cy.visit('http://localhost:4173/')
@@ -154,30 +154,27 @@ describe("Testing with 2 bots",()=>{
     cy.tick(10 * 1000)
 
     cy.contains("div[id='completedqueue']","1 ( vip )")
-
-    cy.tick(10 * 1000)
-
     cy.contains("div[id='completedqueue']","2 ( vip )")
+
+    cy.tick(10 * 1000)
+
     cy.contains("div[id='completedqueue']","3 ( vip )")
-
-    cy.tick(10 * 1000)
-  
     cy.contains("div[id='completedqueue']","4 ( vip )")
+
+    cy.tick(10 * 1000)
+    
     cy.contains("div[id='completedqueue']","7 ( vip )")
-
-    cy.tick(10 * 1000)
-  
     cy.contains("div[id='completedqueue']","8 ( vip )")
-    cy.contains("div[id='completedqueue']","5 ( normal )")
 
     cy.tick(10 * 1000)
   
+    cy.contains("div[id='completedqueue']","5 ( normal )")
     cy.contains("div[id='completedqueue']","6 ( normal )")
   })
 })
 
 describe("Testing with 3 bots",()=>{
-  // total time taken around 40 min average 40/8 5 sec per request
+  // total time taken around 30 min average 30/8 3.75 sec per request
   it("start testing with 3 bot",()=>{
     cy.clock()
     cy.visit('http://localhost:4173/')
@@ -200,22 +197,20 @@ describe("Testing with 3 bots",()=>{
     cy.tick(10 * 1000)
 
     cy.contains("div[id='completedqueue']","1 ( vip )")
-
-    cy.tick(10 * 1000)
-
     cy.contains("div[id='completedqueue']","2 ( vip )")
     cy.contains("div[id='completedqueue']","3 ( vip )")
-    cy.contains("div[id='completedqueue']","4 ( vip )")
 
     cy.tick(10 * 1000)
-  
+
+    cy.contains("div[id='completedqueue']","4 ( vip )")
     cy.contains("div[id='completedqueue']","7 ( vip )")
     cy.contains("div[id='completedqueue']","8 ( vip )")
-    cy.contains("div[id='completedqueue']","5 ( normal )")
 
     cy.tick(10 * 1000)
   
+    cy.contains("div[id='completedqueue']","5 ( normal )")
     cy.contains("div[id='completedqueue']","6 ( normal )")
+  
   })
 })
 
@@ -291,28 +286,21 @@ describe("Interesting Bug",() =>{
     cy.tick(10 * 1000)
 
     cy.contains("div[id='completedqueue']","1 ( vip )")
+    cy.contains("div[id='completedqueue']","2 ( vip )")
+    cy.contains("div[id='completedqueue']","3 ( vip )")
     
 
     cy.get("button[id=removebot]").click()
     
     cy.tick(10 * 1000)
-
-    cy.contains("div[id='completedqueue']","2 ( vip )")
-    cy.contains("div[id='completedqueue']","3 ( vip )")
-    
-    cy.tick(10 * 1000)
-    
-    // 4 will missing cause of the async of the setTimeout when it processing half way haven finish to setting to complete we kill the timeout this will happen
     cy.contains("div[id='completedqueue']","4 ( vip )")
     cy.contains("div[id='completedqueue']","7 ( vip )")
+    
+    cy.tick(10 * 1000)
     cy.contains("div[id='completedqueue']","8 ( vip )")
-
-    cy.tick(10 * 1000)
-
     cy.contains("div[id='completedqueue']","5 ( normal )")
-    
+
     cy.tick(10 * 1000)
-    
-    cy.contains("div[id='completedqueue']","6 ( normal )")
+    cy.contains("div[id='completedqueue']","6 ( normal )")  
   })
 })

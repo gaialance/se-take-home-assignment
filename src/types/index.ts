@@ -1,7 +1,7 @@
 export interface Queue {
-    userType: "vip" | "normal",
-    status:"pending" | "processing" | "completed",
     queueNo : number,
+    status:"pending" | "processing" | "completed",
+    userType: "vip" | "normal",
 }
 
 export interface QueueState {
@@ -11,6 +11,7 @@ export interface QueueState {
 }
 
 export interface Bot{
-    handlingQueue: number,
+    assignedQueue: Queue[],
     timeOutId:number,
+    processTask: (delay:number,completedQueue:Queue[]) => void;
 }

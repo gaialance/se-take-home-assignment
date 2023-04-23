@@ -1,6 +1,8 @@
 <script lang="ts">
 import type { Queue, Bot } from "../types/index"
 
+let interval = 10 * 1000 // 10 second
+
 export default {
   name:"home-page",
   components: {},
@@ -11,7 +13,8 @@ export default {
         vipQueue:[] as Queue[],
         completedQueue :[] as Queue[],
         currentQueueNo:0,
-        bot : [] as Bot[]
+        bots : [] as Bot[],
+        intervalId:0 as number
     }
   },
   methods:{
@@ -55,99 +58,92 @@ export default {
     addBot(){
       // create a new bot object
       const newBot:Bot = {
-        handlingQueue:0,
+        assignedQueue:[],
         timeOutId:0,
+        processTask: function(delay:number,completedObj:Queue[]){
+          if(this.assignedQueue.length > 0){
+            const timeoutId = setTimeout(()=>{
+              // check if current completed queue have the value or not
+              const completedIndex = completedObj.findIndex(queue=>queue.queueNo === this.assignedQueue[0].queueNo)
+              if(completedIndex === -1){
+                completedObj.push(this.assignedQueue[0])
+              }
+              // remove the order from the queue
+              this.assignedQueue.shift()
+              this.processTask(delay,completedObj); // Call the function again after the delay
+            },delay)
+            
+            this.timeOutId = timeoutId
+          }
+        },
       }
-
       // push the object to the bot array
-      this.bot.push(newBot)
+      this.bots.push(newBot)
     },
     removeBot(){
       // check for the timeoutid is defined before clearing it
-      if( this.bot.length > 0 && this.bot[this.bot.length-1].timeOutId !== 0){
-        clearTimeout( this.bot[this.bot.length-1].timeOutId )
-      }
-      this.bot.pop()
-    },
-    handleQueue(){
-      const interval:number = 10 * 1000;
+      if( this.bots.length > 0 && this.bots[this.bots.length-1].timeOutId !== 0){
 
-      // if have bot then assign task
-      if(this.bot.length > 0){
-        // deconstruct the status out
-        this.bot.forEach((bot)=>{
-          if(bot.handlingQueue === 0){
-            if(this.vipQueue.length > 0){
-              // deconstruct the vip to do a shallow copy
-              const {status , ...tempArray} = this.vipQueue[0]
-
-              bot.handlingQueue = tempArray.queueNo
-
-              const timeOut = setTimeout(() => {
-                this.vipQueue.shift()
-                const indexInCompleteArray = this.completedQueue.findIndex((queue)=>queue.queueNo === tempArray.queueNo)
-
-                if(indexInCompleteArray === -1){
-                  this.completedQueue.push({
-                    status:"completed",
-                    ...tempArray
-                  })
-                }
-
-                bot.handlingQueue = 0
-                bot.timeOutId = 0
-                this.handleQueue()
-              }, interval);
-
-              bot.timeOutId = timeOut
-              
-              return bot
-            }
-
-            if(this.normalQueue.length > 0){
-              // deconstruct the vip to do a shallow copy
-              const {status , ...tempArray} = this.normalQueue[0]
-
-              bot.handlingQueue = tempArray.queueNo
-
-              // timeout to remove it
-              const timeOutId = setTimeout(() => {
-                this.normalQueue.shift()
-                const indexInCompleteArray = this.completedQueue.findIndex((queue)=>queue.queueNo === tempArray.queueNo)
-                if(indexInCompleteArray === -1){
-                  this.completedQueue.push({
-                    status:"completed",
-                    ...tempArray
-                  })
-                }
-                bot.handlingQueue = 0
-                bot.timeOutId = 0
-                this.handleQueue()
-              }, interval);
-
-              bot.timeOutId = timeOutId
+        const bot = this.bots[this.bots.length-1]
+        
+        if(bot.assignedQueue.length > 0){
+          if(this.completedQueue.findIndex(queue=>queue.queueNo === bot.assignedQueue[0].queueNo) === -1){
+            if(bot.assignedQueue[0].userType === 'vip'){
+                this.vipQueue.unshift(bot.assignedQueue[0])
+              }
+            if(bot.assignedQueue[0].userType === 'normal'){
+              this.normalQueue.unshift(bot.assignedQueue[0])
             }
           }
-        })
+        }
+        clearTimeout( this.bots[this.bots.length-1].timeOutId )
+      }
+      this.bots.pop()
+    },  
+    handleOrder(){
+      // check if there is available bot
+      const availableBots = this.bots.filter(bot=>bot.assignedQueue.length === 0)
+      if(availableBots.length === 0){
+        return
+      }
+      
+      // Assign the order to an avaiableBot
+      // assign vip first
+      if(this.vipQueue.length > 0){
+        // create temp value to push in case another function make adjustment\
+        const tempVipQueueObj = this.vipQueue[0]
+        availableBots[0].assignedQueue.push(tempVipQueueObj)
+        this.vipQueue.shift()
+        availableBots[0].processTask(3000,this.completedQueue)
+        return
+      }
+
+      if(this.normalQueue.length > 0){
+        // create temp value to push in case another function make adjustment\
+        const tempNormalQueueObj = this.normalQueue[0]
+        availableBots[0].assignedQueue.push(tempNormalQueueObj)
+        this.normalQueue.shift()
+        availableBots[0].processTask(interval,this.completedQueue)
+        return
       }
     }
   },
   watch:{
-    bot:{
+    bots:{
       handler: function (){
-        this.handleQueue()
+        this.handleOrder()
       },
       deep:true
     },
     vipQueue:{
       handler: function (){
-        this.handleQueue()
+        this.handleOrder()
       },
       deep:true
     },
     normalQueue:{
       handler: function (){
-        this.handleQueue()
+        this.handleOrder()
       },
       deep:true
     }
@@ -167,7 +163,7 @@ export default {
       <button id="addbot" @click="addBot">+ Bot</button>
       <button id="removebot" @click="removeBot">- Bot</button>
     </div>
-    <h3>Bot Count : {{ bot.length }} </h3>
+    <h3>Bot Count : {{ bots.length }} </h3>
     <button @click="handleClearQueue">Clear Queue</button>
     <div class="grid" style="width: 600px; margin-top: 20px;">
       <div class="card">
