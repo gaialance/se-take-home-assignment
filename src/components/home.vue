@@ -70,7 +70,7 @@ export default {
       this.bot.pop()
     },
     handleQueue(){
-      const interval:number = 5 * 1000;
+      const interval:number = 10 * 1000;
 
       // if have bot then assign task
       if(this.bot.length > 0){

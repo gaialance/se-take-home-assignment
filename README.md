@@ -36,3 +36,19 @@ You may demostrate your final funtioning prototype with **one and only one** of 
 - Testing, testing and testing. Make sure the prototype is functioning and meeting all the requirements.
 - Do not over engineering. Try to scope your working hour within 3 hours (1 hour per day). You may document all the optimization or technology concern that you think good to bring in the solution.
 - Complete the implementation as clean as possible, clean code is a strong plus point, do not bring in all the fancy tech stuff.
+
+### Testing Build
+- npm i
+- npm run build
+- test:e2e
+
+### Running build
+- npm i
+- npm run build
+- npm run preview to host it on the localhost:4173
+
+### localhost testing
+-npm run test:e2e:dev
+<!-- after open the Cypress Ui you can click on end to end testing then click one the home.cy.ts on the screen then it will run the test -->
+
+<!-- Side note i found a bug and still finding out solution for this  -->
