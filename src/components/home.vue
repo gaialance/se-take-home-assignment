@@ -62,7 +62,7 @@ export default {
       // push the object to the bot array
       this.bot.push(newBot)
     },
-    async removeBot(){
+    removeBot(){
       // check for the timeoutid is defined before clearing it
       if( this.bot.length > 0 && this.bot[this.bot.length-1].timeOutId !== 0){
         clearTimeout( this.bot[this.bot.length-1].timeOutId )
