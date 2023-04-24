@@ -22,13 +22,19 @@ describe("Test normal flow",()=>{
     cy.clock()
     cy.visit('http://localhost:4173/')
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","1 ( vip )")
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","2 ( vip )")
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","3 ( vip )")
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","4 ( vip )")
 
     cy.get("button[id='addnormal']").click()
+    cy.contains("div[id='normalqueue']","5 ( normal )")
 
     cy.get("button[id='addbot']").click()
+    cy.contains("h3[id='botcount']","Bot Count : 1")
 
     cy.tick(10 * 1000)
 
@@ -59,13 +65,18 @@ describe("Test irregular flow",()=>{
     cy.visit('http://localhost:4173/')
 
     cy.get("button[id='addbot']").click()
+    cy.contains("h3[id='botcount']","Bot Count : 1")
 
     cy.get("button[id='addvip']").click()
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","2 ( vip )")
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","3 ( vip )")
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","4 ( vip )")
 
     cy.get("button[id='addnormal']").click()
+    cy.contains("div[id='normalqueue']","5 ( normal )")
 
     cy.tick(10 * 1000)
 
@@ -276,12 +287,17 @@ describe("Interesting Bug",() =>{
     cy.get("button[id='addvip']").click()
     cy.get("button[id='addvip']").click()
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","4 ( vip )")
   
     cy.get("button[id='addnormal']").click()
+    cy.contains("div[id='normalqueue']","5 ( normal )")
     cy.get("button[id='addnormal']").click()
+    cy.contains("div[id='normalqueue']","6 ( normal )")
   
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","7 ( vip )")
     cy.get("button[id='addvip']").click()
+    cy.contains("div[id='vipqueue']","8 ( vip )")
 
     cy.tick(10 * 1000)
 

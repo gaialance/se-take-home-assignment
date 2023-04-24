@@ -163,16 +163,16 @@ export default {
       <button id="addbot" @click="addBot">+ Bot</button>
       <button id="removebot" @click="removeBot">- Bot</button>
     </div>
-    <h3>Bot Count : {{ bots.length }} </h3>
+    <h3 id="botcount">Bot Count : {{ bots.length }} </h3>
     <button @click="handleClearQueue">Clear Queue</button>
     <div class="grid" style="width: 600px; margin-top: 20px;">
       <div class="card">
         Pending
         <div class="queue" v-if="vipQueue.length > 0 || normalQueue.length > 0">
-          <div v-for="queue in vipQueue" :key="queue.queueNo" class="gold">
+          <div id="vipqueue" v-for="queue in vipQueue" :key="queue.queueNo" class="gold">
             {{ queue.queueNo }} ( {{ queue.userType }} )
           </div>
-          <div v-for="queue in normalQueue" :key="queue.queueNo" class="white">
+          <div id="normalqueue" v-for="queue in normalQueue" :key="queue.queueNo" class="white">
             {{ queue.queueNo }} ( {{ queue.userType }} )
           </div>
         </div>
